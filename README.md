@@ -7,7 +7,7 @@
 * [Introduction](#introduction)
 * [Requirements](#requirements)
 * [Challenge](#challenge)
-* [Code Dependencies](#code dependencies)
+* [Code Dependencies](#codedependencies)
 
 ## Introduction
 
