@@ -27,7 +27,7 @@ Link to the game: https://anikafaldzhieva.github.io/Matching-Game/
 
 ## Code Dependencies
 
-To built this app I have used HTML, CSS and JavaScript. To make it more interactive I have used different animation. Also I have used the porwefull JS library -  jQuery:
+To built this app, I have used HTML, CSS and JavaScript. To make it more interactive I have used different animation. Also I have used the powerfull JS library -  jQuery:
 
 * jQuery UI - for more information [click here](https://jqueryui.com/).
 * jQuery Corner plugin - for more information [click here](http://jquery.malsup.com/corner/).
