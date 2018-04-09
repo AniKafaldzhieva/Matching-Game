@@ -11,28 +11,42 @@
  *   - add each card's HTML to the page
  */
 
+// Get all document elements
 const deck = document.querySelector('.deck');
-let moves = document.querySelector('.moves');
+const moves = document.querySelector('.moves');
 const reset = document.querySelector('.restart')
 let cards = [...document.querySelectorAll('.card')];
 let matchedCards = deck.getElementsByClassName('match');
 let stars = [...document.getElementsByClassName('fa fa-star')];
 let timer = document.getElementById('timer');
+// An array for the open cards
 let openCards = [];
-let count = 0;
+// A counter for the moves and stars
+let movesCount = 0;
 let starsCount = 0;
+// Variables for the timer
 let seconds = 0;
 let minutes = 0;
 let time;
 
+// Star a new game when the page is refreshed/loaded
 window.onload = startGame();
 
-deck.addEventListener('click', openFunction);
+// Display a card when is clicked
+deck.addEventListener('click', displayCards);
 
+// A function to star a new game
 function startGame() {
   cards = shuffle(cards);
   hideCards();
   stopTimer();
+
+// Starts the timer when a card is clicked
+  [...deck.children].forEach((card) => {
+      card.addEventListener('click', startTimer);
+  })
+
+// Hide all cards after 3 seconds
   setTimeout(hideCards, 3000);
 
   for (let card of cards) {
@@ -44,12 +58,15 @@ function startGame() {
     star.className = 'fa fa-star';
 
   }
-  count = 0;
-  moves.innerHTML = count;
-  reset.addEventListener('click', resetFunction);
+  movesCount = 0;
+  moves.innerHTML = movesCount;
+
+  // Reset the game when the button is clicked
+  reset.addEventListener('click', resetGame);
 
 }
 
+// A function that hide all cards from the deck
 function hideCards() {
   for (let card of cards) {
     card.classList.remove('show', 'open', 'match', 'disabled');
@@ -57,12 +74,15 @@ function hideCards() {
   }
 }
 
-function openFunction(e) {
+// A function that display a card
+function displayCards(e) {
+// Prevent from adding more cards in the array
   if (openCards.length > 1) {
     return;
 
   }
 
+// When the click target is a card, opens it and pushes it in the array
   if (e.target.nodeName == 'LI') {
     e.target.classList.add('open', 'show', 'disabled');
     openCards.push(e.target);
@@ -77,22 +97,19 @@ function openFunction(e) {
       unmatchedPairs();
 
     }
-    count++;
-
-    if (count === 1) {
-      startTimer();
-    }
+    movesCount++;
 
   }
   if (matchedCards.length === 16) {
     endGame();
 
   }
-  moves.innerHTML = count;
-  rating(count);
+  moves.innerHTML = movesCount;
+  rating(movesCount);
 
 }
 
+// A function for a matched pair of cards
 function matchedPairs() {
   openCards[0].classList.add('match', 'disabled');
   openCards[0].classList.remove('show', 'open');
@@ -102,6 +119,7 @@ function matchedPairs() {
 
 }
 
+// A function for an unmatched pair of cards
 function unmatchedPairs() {
   openCards[0].classList.add('nomatch');
   openCards[1].classList.add('nomatch');
@@ -113,7 +131,13 @@ function unmatchedPairs() {
 
 }
 
+// A function for starting a timer
 function startTimer() {
+// Remove the event listener from all cards
+  [...deck.children].forEach((card) => {
+       card.removeEventListener('click', startTimer);
+   })
+
   seconds++;
   if (seconds >= 60) {
     seconds = 0;
@@ -123,16 +147,24 @@ function startTimer() {
     }
   }
 
-  timer.textContent = (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+  //timer.textContent = (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+
+  minutes = minutes.toString().padStart(2, "0");
+  seconds = seconds.toString().padStart(2, "0");
+  
+  timer.textContent = minutes + ":" + seconds;
+
   setTimer();
 
 }
 
+// A function for calling the timer after 1 second
 function setTimer() {
   time = setTimeout(startTimer, 1000);
 
 }
 
+// A function for stopping and clearing the timer
 function stopTimer() {
   clearTimeout(time);
   seconds = 0;
@@ -141,7 +173,9 @@ function stopTimer() {
 
 }
 
+// A function for ending game
 function endGame() {
+// Shows the div element as a dialog
   $(function() {
     $("#wrapper").dialog({
       autoOpen: false,
@@ -154,27 +188,31 @@ function endGame() {
     $('#wrapper').position({of: $('.container')});
   })
 
+// Restarts the game and closes the dialog when the button is clicked
   document.querySelector('.modal-btn').onclick = function() {
     $("#wrapper").dialog("close");
     startGame();
 
   }
 
-  document.querySelector('.finalMoves').innerHTML = count;
+// Display the final time, moves and stars
+  document.querySelector('.finalMoves').innerHTML = movesCount;
   document.querySelector('.finalStars').innerHTML = starsCount;
   document.querySelector('.finalTime').innerHTML = timer.innerHTML;
 
-  reset.removeEventListener('click', resetFunction);
+  reset.removeEventListener('click', resetGame);
   clearTimeout(time);
 
 }
 
-function resetFunction() {
+// A function for resetting the game
+function resetGame() {
   openCards = [];
   startGame();
 
 }
 
+// A function for the rating
 function rating(counter) {
   if (counter < 10) {
     starsCount = 3;
@@ -189,6 +227,7 @@ function rating(counter) {
 
   }
 }
+
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
   var currentIndex = array.length,
